@@ -3,29 +3,105 @@ use yii\helpers\Html;
 
 use miloschuman\highcharts\Highcharts;
 
+
 ?>
 <div class="col-md-12">
-	
-	<div id="acc">
+
+
+	<div id="speed">
 	<?= Highcharts::widget([
-		   'options' => [
-				'title' => ['text' => 'Accelerometer'],
+			 'options' => [
+				'title' => ['text' => Yii::t('frontend', 'Speed')],
 				'chart' => [
-				  'renderTo' => 'acc',
-				  'zoomType'=> 'x',
-				  'type'=> 'spline',
-				  'animation' => 'Highcharts.svg',
-				],   
+					'renderTo' => 'speed',
+					'zoomType'=> 'x',
+					'type'=> 'spline',
+					'animation' => 'Highcharts.svg',
+				],
 
 				'xAxis' => [
 					 'type' => 'datetime',
-			
+				],
+
+				'tooltip' => ['shared' => true],
+
+				'yAxis' => [
+					//primary yAxis
+					[
+						'labels' => ['format'=>'{value} km/h'],
+						'title' => ['text' => Yii::t('frontend', 'Speed (km/h)')]
+
+					],
+					[
+						'labels' => ['format' =>'{value} m'],
+						'title' => ['text' => Yii::t('frontend','Braking distance')],
+						'opposite' => True,
+
+					],
+
+				],
+
+				'series' => [
+					[
+						'name' => Yii::t('frontend', 'Speed over ground'),
+						'data' =>'',
+						'tooltip' => ['valueSuffix' => ' km/h'],
+
+					],
+					[
+						'name' => Yii::t('frontend','Braking distance'),
+						'data' =>'',
+						'type' => 'column',
+						'yAxis' => 1,
+						'tooltip' => ['valueSuffix' => ' m'],
+						'pointWidth' => 5,
+					]
+				],
+			 ]
+		])?>
+	</div>
+
+	<div id="acc">
+	<?= Highcharts::widget([
+		   'options' => [
+				'title' => ['text' => Yii::t('frontend', 'Accelerometer')],
+				'chart' => [
+				  'renderTo' => 'acc',
+				  'zoomType'=> 'xy',
+				  'type'=> 'spline',
+				  'animation' => 'Highcharts.svg',
+				],
+
+				'xAxis' => [
+					 'type' => 'datetime',
+
 				],
 
 				'yAxis' => [
-				 'title' => ['text' => 'Acceleration (m/s2)']
+					[ // Primary yAxis
+						'title'=> [
+								'text'=> 'Acceleration',
+						],
+						'labels' => [
+								'format' => '{value} m/s2',
+						],
+
+						'opposite' => True
+
+
+					],
+					[ // Secondary yAxis
+							'gridLineWidth'=> 0,
+							'title'=> [
+									'text' =>'Speed',
+							],
+							'labels' => [
+									'format' => '{value} km/h',
+							]
+
+					]
 				],
-			    
+
 				'series' => [
 					[
 						'name' => 'x',
@@ -39,29 +115,33 @@ use miloschuman\highcharts\Highcharts;
 						'name' => 'z',
 						'data' =>''
 					],
-				], 
+					[
+						'name' => 'speed',
+						'data' =>''
+					],
+				],
 		   ]
 		])?>
 	</div>
 	<div id="gyro">
 		<?= Highcharts::widget([
 		   'options' => [
-				'title' => ['text' => 'Gyroscope'],
+				'title' => ['text' => Yii::t('frontend', 'Gyroscope')],
 				'chart' => [
 				  'renderTo' => 'gyro',
 				  'zoomType'=> 'x',
 				  'type'=> 'spline',
-				],   
+				],
 
 				'xAxis' => [
 					 'type' => 'datetime',
-			
+
 				],
 
 				'yAxis' => [
 				 'title' => ['text' => 'Angular velocity (rad/s)']
 				],
-			    
+
 				'series' => [
 					[
 						'name' => 'x',
@@ -75,20 +155,20 @@ use miloschuman\highcharts\Highcharts;
 						'name' => 'z',
 						'data' =>''
 					],
-				], 
+				],
 		   ]
 		])?>
 	</div>
-	
+
 	<div id="vibration">
 		<?= Highcharts::widget([
 		   'options' => [
-				'title' => ['text' => 'Vibration'],
+				'title' => ['text' => Yii::t('frontend','Vibrations')],
 				'chart' => [
 				  'renderTo' => 'vibration',
 				  'zoomType'=> 'x',
 				  'type'=> 'spline',
-				],   
+				],
 				'rangeSelector' => [
 					'selected' => 2
 				],
@@ -97,17 +177,19 @@ use miloschuman\highcharts\Highcharts;
 				],
 
 				'yAxis' => [
-				 'title' => ['text' => 'Force (g)']
+                    'title' => ['text' => 'Force (g)'],
+                    'min' => 0.2,
 				],
-			    
+
 				'series' => [
 					[
 						'name' => 'IN',
 						'data' =>'',
+                        // points marker
 						'lineWidth' => 0,
 						'marker' => [
 							'enabled'	=> True,
-							'radius'	=> 5
+							'radius'	=> 2
 						],
 						'tooltip' => [
 							'valueDecimals' => 2
@@ -117,18 +199,42 @@ use miloschuman\highcharts\Highcharts;
 								'lineWidthPlus' => 0
 							]
 						]
+
 					],
-				], 
-			
+                    [
+                        'name' => 'OUT',
+                        'data' =>'',
+                        // points marker
+                        'lineWidth' => 0,
+                        'marker' => [
+                            'enabled'	=> True,
+                            'radius'	=> 2
+                        ],
+                        'tooltip' => [
+                            'valueDecimals' => 2
+                        ],
+                        'states' => [
+                            'hover'=> [
+                                'lineWidthPlus' => 0
+                            ]
+                        ]
+
+                    ],
+				],
+
 		   ]
 		])?>
 	</div>
-	
+
 </div>
 
 <?php
 
 $this->registerJS("
+
+		function unselectByClick(){
+			console.log('click speed');
+		}
 
 		Highcharts.setOptions({
 			global: {
@@ -137,16 +243,17 @@ $this->registerJS("
 		});
 
 		var acc = $('#acc').highcharts();
-			
 		var gyro = $('#gyro').highcharts();
-		
+		var speedChart = $('#speed').highcharts();
 		var vibration = $('#vibration').highcharts();
-		
+
+		speedChart.selection;
+
 		var request = $request;
-		
+
 		//read from DB
 		var jsonPath = 'acc?id=$model->id';
-		
+
 		var pathJSON = {
 			acc : {
 				request : '/storage/json/acc.json',
@@ -154,23 +261,25 @@ $this->registerJS("
 			},
 			gps : {
 				request : '/storage/json/gps.json',
-				db 		: 'gps?id=$model->id'
+				db 		: 'gps?id=$model->id',
+				brakingDistance : 'brakingdistance?id=$model->id'
 			},
 			vibration: {
 				request : '/storage/json/vib.json',
 				db 		: 'vibration?id=$model->id'
 			}
+
 		};
-		
-		
+
+
 		//real time update data
 		if(request) setInterval(requestData, 1000);
-		
-		
+
+
 		init();
-		var x =[], y=[], z=[], Gx=[], Gy=[], Gz=[], vib=[];
+		var x =[], y=[], z=[], Gx=[], Gy=[], Gz=[], vib=[], vibOut=[], speed=[], distance=[];
 		var accStart=0;
-		
+
 		function requestData(){
 			//acc
 			$.getJSON(pathJSON.acc.request, function (data) {
@@ -186,7 +295,7 @@ $this->registerJS("
 						Gy.push([data[k][0],data[k][5]]);
 						Gz.push([data[k][0],data[k][6]]);
 					}
-					
+
 					acc.series[0].update({
 					//pointStart: newSeries[0].pointStart,
 						data: x
@@ -199,7 +308,7 @@ $this->registerJS("
 					//pointStart: newSeries[2].pointStart,
 						data: z
 					}, true);
-					
+
 					gyro.series[0].update({
 					//pointStart: newSeries[0].pointStart,
 						data: Gx
@@ -212,23 +321,23 @@ $this->registerJS("
 					//pointStart: newSeries[2].pointStart,
 						data: Gz
 					}, true);
-					
+
 					accStart = dataLen;
-					
+
 				}
-			});	
-			
+			});
+
 			//vibration
 			$.getJSON(pathJSON.vibration.request, function (data) {
 				var dataLen = data.length;
 				var vibLen = vib.length;
 				if (vibLen < dataLen){
 					for(k=vibLen;k<data.length;k++){
-				
+
 						//convert to UNIX
-						var ts = new Date(data[k][0]).getTime();
-						
-						vib.push([ts,data[k][1]]);			
+					//	var ts = new Date(data[k][0]).getTime();
+
+						//vib.push([ts,data[k][1]]);
 					}
 					vibration.series[0].update({
 					//pointStart: newSeries[0].pointStart,
@@ -238,25 +347,26 @@ $this->registerJS("
 			});
 
 
-		
+
 		}
 
 
 		function init(){
+			//acc and gyro get data
 			$.getJSON(pathJSON.acc.db, function (data) {
-				
+
 				for(k=0;k<data.length;k++){
-			
+
 					//convert to UNIX
-					var ts = new Date(data[k][0]).getTime();
-					
-					x.push([ts,data[k][1]]);
-					y.push([ts,data[k][2]]);
-					z.push([ts,data[k][3]]);
-					Gx.push([ts,data[k][4]]);
-					Gy.push([ts,data[k][5]]);
-					Gz.push([ts,data[k][6]]);
-					
+					//var ts = new Date(data[k][0]).getTime();
+
+					x.push([data[k][0],data[k][1]]);
+					y.push([data[k][0],data[k][2]]);
+					z.push([data[k][0],data[k][3]]);
+					Gx.push([data[k][0],data[k][4]]);
+					Gy.push([data[k][0],data[k][5]]);
+					Gz.push([data[k][0],data[k][6]]);
+
 				}
 
 				acc.series[0].update({
@@ -271,7 +381,7 @@ $this->registerJS("
 				//pointStart: newSeries[2].pointStart,
 					data: z
 				}, true);
-				
+
 				gyro.series[0].update({
 				//pointStart: newSeries[0].pointStart,
 					data: Gx
@@ -284,30 +394,82 @@ $this->registerJS("
 				//pointStart: newSeries[2].pointStart,
 					data: Gz
 				}, true);
-				
+
 				accStart = x.length;
 				console.log('Data len: '+data.length);
 				console.log('X len: '+x.length);
-				
+
 			});
-			
+
+			//vibration get data
 			$.getJSON(pathJSON.vibration.db, function (data) {
 				for(k=0;k<data.length;k++){
-			
+
 					//convert to UNIX
-					var ts = new Date(data[k][0]).getTime();
-					
-					vib.push([ts,data[k][1]]);			
+                //    console.log(data[k].time);
+					var ts = new Date(data[k].time).getTime();
+                    if(data[k].sensor_id==1)    vib.push([ts,parseFloat(data[k].peakForce)]);
+                    else vibOut.push([ts,parseFloat(data[k].peakForce)]);
+
+					//vib.push([ts,data[k][1]]);
 				}
 				vibration.series[0].update({
 				//pointStart: newSeries[0].pointStart,
 					data: vib
 				}, true);
+
+                vibration.series[1].update({
+                    data: vibOut
+                },true);
 			});
-			
-			
+
+			//speed get data
+			$.getJSON(pathJSON.gps.db, function (data) {
+				for(k=0;k<data.length;k++){
+					//convert to UNIX
+					var ts = new Date(data[k][0]).getTime();
+
+					speed.push([ts,data[k][1]]);
+				}
+				console.log(ts);
+
+				speedChart.series[0].update({
+				//pointStart: newSeries[0].pointStart,
+					data: speed
+				}, true);
+
+				acc.series[3].update({
+				//pointStart: newSeries[0].pointStart,
+					data: speed,
+					yAxis:1
+				}, true);
+			});
+
+
+			//speed get data
+			$.getJSON(pathJSON.gps.brakingDistance, function (data) {
+				for(k=0;k<data.length;k++){
+					//convert to UNIX
+					//var ts = new Date(data[k].).getTime();
+					var ts = new Date(data[k].time).getTime();
+
+					distance.push([ts, data[k].distance]);
+
+				}
+
+				speedChart.series[1].update({
+					data: distance,
+				}, true);
+
+
+			});
+
+
 		}
-		
+
+
+
+
 	");
-	
+
 ?>

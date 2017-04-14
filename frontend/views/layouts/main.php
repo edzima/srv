@@ -21,6 +21,7 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCiCDhHefqke0agQijl-VGr-iOpdCkPx5g" type="text/javascript"></script>
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -37,21 +38,17 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-		['label' => Yii::t('frontend', 'Tests'), 'url' => ['/test/index']],
-        ['label' => Yii::t('frontend', 'Vechicles'), 'url' => ['/vechicle/index']],
-        [
-            'label' => Yii::t('frontend', 'Users'),
-            'url' => ['/account/default/users'],
-            'visible' => !Yii::$app->user->isGuest,
-        ],
-		
+        ['label' => Yii::t('frontend', 'Create Test'), 'url' => ['/test/create']],
+		    ['label' => Yii::t('frontend', 'Tests'), 'url' => ['/test/index']],
+        ['label' => Yii::t('frontend', 'Vehicles'), 'url' => ['/vechicle/index']],
+
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => Yii::t('frontend', 'Login'), 'url' => ['/account/sign-in/login']];
     } else {
         $menuItems[] = [
-			
-		
+
+
             'label' => Yii::$app->user->identity->username,
             'url' => '#',
             'items' => [

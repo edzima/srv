@@ -9,7 +9,7 @@ use Yii;
  *
  * @property integer $id
  * @property integer $user_id
- * @property integer $car_id
+ * @property integer $vehicle_id
  * @property string $start_at
  * @property string $finish_at
  */
@@ -30,7 +30,7 @@ class Test extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
-            [['user_id', 'car_id'], 'integer'],
+            [['user_id', 'vehicle_id'], 'integer'],
             [['start_at', 'finish_at'], 'safe'],
         ];
     }
@@ -43,12 +43,12 @@ class Test extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('common', 'ID'),
             'user_id' => Yii::t('common', 'User ID'),
-            'car_id' => Yii::t('common', 'Car ID'),
+            'vehicle_id' => Yii::t('common', 'Vehicle ID'),
             'start_at' => Yii::t('common', 'Start At'),
             'finish_at' => Yii::t('common', 'Finish At'),
         ];
     }
-	
+
 	// when test is started, get it id
 	public function getLastID(){
 		return Test::find()
@@ -78,5 +78,13 @@ class Test extends \yii\db\ActiveRecord
     public function getVibrations()
     {
         return $this->hasMany(Vibration::className(), ['test_id' => 'id']);
+    }
+
+    public function getVehicle(){
+      return $this->hasOne(Vechicle::className(), ['id'=>'vehicle_id']);
+    }
+
+    public function getUser(){
+      return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 }

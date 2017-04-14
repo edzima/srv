@@ -1,7 +1,7 @@
 <?php
 
 $config = [
-    'name'=>'System Research Vechicles',
+    'name' =>'System kontroli pojazdów',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'extensions' => require(__DIR__ . '/../../vendor/yiisoft/extensions.php'),
     'timeZone' => env('TIMEZONE'),

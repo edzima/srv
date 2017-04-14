@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('frontend', 'Tests'), 'url' 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<?php 
+<?php
 	if (Yii::$app->session->hasFlash('stopTest')) echo Alert::widget([
 	   'options' => ['class' => 'alert-info'],
 	   'body' => Yii::$app->session->getFlash('stopTest'),
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 
- 
+
 <div class="test-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -36,16 +36,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-	
-	
 
-	
+
 	<?= $this->render('_chart', [
         'model' => $model,
-		'request' => 0 
+				'request' => 0
     ]) ?>
-	
+
+		<?= $this->render('_map',[
+				'position' => $position
+			]) ?>
+
+
+
 
 </div>
-
-

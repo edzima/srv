@@ -15,11 +15,13 @@ class TestSearch extends Test
     /**
      * @inheritdoc
      */
+     public $vehicle;
+     public $user;
     public function rules()
     {
         return [
-            [['id', 'user_id', 'car_id'], 'integer'],
-            [['start_at', 'finish_at'], 'safe'],
+            [['id', 'user_id', 'vehicle_id'], 'integer'],
+            [['start_at', 'finish_at','vehicle', 'user'], 'safe'],
         ];
     }
 
@@ -43,6 +45,8 @@ class TestSearch extends Test
     {
         $query = Test::find();
 
+        $query->joinWith(['vehicle', 'user']);
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -61,10 +65,13 @@ class TestSearch extends Test
         $query->andFilterWhere([
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'car_id' => $this->car_id,
+            'vehicle_id' => $this->vehicle_id,
             'start_at' => $this->start_at,
             'finish_at' => $this->finish_at,
         ]);
+
+        $query->andFilterWhere(['like', 'vehicle.name', $this->vehicle])
+              ->andFilterWhere(['like', 'user.username', $this->user]);
 
         return $dataProvider;
     }

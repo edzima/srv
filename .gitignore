@@ -20,3 +20,5 @@ phpunit.phar
 /phpunit.xml
 # vagrant runtime
 /.vagrant
+# ftpconfig
+.ftpconfig

@@ -13,15 +13,19 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'static/css/style.css',
+
     ];
-	public $js = [
-        'js/yii_overrides.js',
+
+    public $js = [
+        'static/js/yii_overrides.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
         'common\assets\OpenSans',
         'common\assets\FontAwesome',
-		'common\assets\SweetAlert'
+		    'common\assets\SweetAlert',
+
+
     ];
 }

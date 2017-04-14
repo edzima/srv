@@ -24,7 +24,7 @@ class AccAndGyro extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'acc_and_gyro';
+        return 'test_acc_and_gyro';
     }
 
     /**

@@ -26,11 +26,22 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'user_id',
-            'car_id',
-            'start_at',
-            'finish_at',
+            //'id',
+            [
+             'attribute' => 'user',
+             'value' => 'user.username',
+             'label' => Yii::t('common', 'Username'),
+            ],
+            [
+             'attribute' => 'vehicle',
+             'value' => 'vehicle.name',
+             'label' => Yii::t('common', 'Vehicle')
+            ],
+
+               'start_at',
+
+              'finish_at',
+
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

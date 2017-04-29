@@ -19,6 +19,7 @@
 return [
     'Accelerometer' => 'Akcelerometr',
     'Activation for {name}' => 'Активация для {name}',
+    'Are you sure you want to delete this item?' => 'Jest pewień, że chcesz to usunąc?',
     'Articles' => 'Konkursy',
     'Articles category &laquo;{title}&raquo;' => 'Konkursy &laquo;{title}&raquo;',
     'Articles tagged with &laquo;{name}&raquo;' => 'Статьи с тегом &laquo;{name}&raquo;',

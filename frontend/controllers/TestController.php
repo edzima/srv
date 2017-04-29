@@ -89,10 +89,10 @@ class TestController extends Controller
 				]);
 
 			} else {
-        $vechicles = ArrayHelper::map(Vechicle::find()->all(),'id','name');
+                $vechicles = ArrayHelper::map(Vechicle::find()->all(),'id','name');
 				return $this->render('create', [
 					'model' => $model,
-          'vechicles' => $vechicles
+                    'vechicles' => $vechicles
 				]);
 			}
 		}
@@ -148,6 +148,7 @@ class TestController extends Controller
 		$model = $this->findModel($id);
 		$model->finish_at = '';
 		if(@exec("sudo bash /home/pi/python/srv.sh stop") && $model->save()){
+            exec("bash /home/pi/python/GPSstop.sh");
 			Yii::$app->session->setFlash('stopTest', Yii::t('common', 'Stoped test'));
             return Yii::$app->getResponse()->redirect(['test/view',
 					'id' => $model->id
@@ -169,8 +170,9 @@ class TestController extends Controller
     public function actionView($id)
     {
 
-        $gps = Gps::find()->where("test_id = $id AND speed > 2")->asArray()->all();
+        $gps = Gps::find()->where("test_id = $id AND speed > 1")->asArray()->all();
         $position =[];
+
         if($gps){
           array_push($position, array("Position", "details"));
       		for($i=0;$i<count($gps);$i+=10)
@@ -240,7 +242,11 @@ class TestController extends Controller
   public function actionVibration($id){
 
       header("Content-type: text/json");
-      $model = Vibration::find()->where("test_id = $id")->asArray()->all();
+      $model = Vibration::find()
+        ->select(['sensor_id', 'time','peakForce'])
+        ->where("test_id = $id")
+        ->asArray()
+        ->all();
       $data = array();
 
       echo json_encode($model);
@@ -256,6 +262,7 @@ class TestController extends Controller
     //from the end
     $gps = array_reverse($gps);
 
+
     //sum distance
     $sum = 0;
     $min = $gps[0]['speed'];
@@ -266,7 +273,6 @@ class TestController extends Controller
     $represion = array();
     for($i = 0; $i < count($gps)-1; ++$i) {
         if($gps[$i]['speed']<$gps[$i+1]['speed']){
-
 
           //Check that the vehicle at the end of the test is not standing
           if(!count($represions)&&!$isMinTime){
@@ -286,20 +292,26 @@ class TestController extends Controller
           $distance = $this->distance($gps[$i]['longitude'],$gps[$i+1]['longitude'],$gps[$i]['latitude'],$gps[$i+1]['latitude']);
           $sum +=  $distance;
         }
-        else if($sum){
-          $represion = [
-            'minSpeed' => $min,
-            'time' => $minTime,
-            'maxSpeed' => $gps[$i]['speed'],
-            'distance' => round($sum*1000) // km to m
-          ];
-          $represions[] = $represion;
+        else if($sum && $minTime){
+            // limit of small diffrence
+            if(($gps[$i]['speed']-$min)>1){
+                $represion = [
+                  'minSpeed' => $min,
+                  'maxSpeed' => $gps[$i]['speed'],
+                  'time' => $minTime,
+                  'distance' => round($sum*1000) // km to m
+                ];
+                $represions[] = $represion;
+            }
+
           $min = $gps[$i]['speed'];
           $minTime = $gps[$i]['time'];
-          $sum =0;
+          $sum = 0;
         }
 
     }
+    // time is reverse
+    $represions = array_reverse($represions);
 
     echo json_encode($represions);
 

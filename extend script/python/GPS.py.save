@@ -1,0 +1,113 @@
+#!/usr/bin/python
+import serial
+import pynmea2
+import time
+
+
+
+class GPSData:
+
+  def __init__(self):
+     self.longitude=0
+     self.latitude=0
+     self.altitude=0
+     self.speed=0
+
+class GPS:
+
+    def isReady(self):
+        try:
+            self.ser.flushInput() #flush input buffer, discarding all its contents
+            self.ser.flushOutput() #flush output buffer, aborting current output
+            self.ser.write('AT+CGNSPWR=1\r\n')
+            time.sleep(0.5) #give the serial port sometime to receive the data
+            numOfLines=0
+            while numOfLines<5:
+                response = self.ser.readline()
+                numOfLines = numOfLines + 1
+                if response.find('OK')==0:
+                    print 'GPS TURN ON'
+                    self.ser.write('AT+CGNSTST=1\r\n')
+                    time.sleep(0.5) #give the serial port sometime to receive the data
+                    numOfLines=0
+                    while numOfLines<5:
+                         if response.find('OK')==0:
+                            print 'SEND GPS DATA TURN ON'
+                            self.isConnected=1
+                            return True
+                         numOfLines= numOfLines+1
+                    break
+            if self.isConnected:
+                print "gps not connected"
+                return False
+	
+        except Exception, e:
+            print 'Serial error ', e
+            return False
+
+
+
+    def readGPS(self):
+
+        if self.isConnected:
+            while True:
+                GpsData = GPSData
+                sentence = self.ser.readline()
+                if sentence.find('GGA') > 0:
+                    GGA = pynmea2.parse(sentence)
+                    GpsData.longitude= GGA.longitude
+                    GpsData.latitude= GGA.latitude
+        	            GpsData.altitude= GGA.altitude
+                    #print "{time}: {lat},{lon}, {altitude}".format(time=GGA.timestamp,lat=GGA.latitude,lon=GGA.longitude, altitude=GGA.altitude)
+                if sentence.find('VTG') >0:
+                    VTG = pynmea2.parse(sentence)
+                    GPSData.speed=VTG.spd_over_grnd_kmph
+
+                    if GPSData.longitude>0: #GPS FIND POSITION
+                        #print "{lat},{lon}, {altitude}, v= {speed} ".format(lat=GpsData.latitude,lon=GpsData.longitude, altitude=GpsData.altitude, speed=GpsData.speed)
+                        return GpsData
+                    else:
+                        #print("GPS NOT FIND SATELITE")
+                        return False
+        else:
+            print "GPS NOT CONNECTED"
+            return False
+
+    def __del__(self):
+        self.ser.flushInput() #flush input buffer, discarding all its contents
+        self.ser.flushOutput() #flush output buffer, aborting current output
+        self.ser.write('AT+CGNSTST=0\r\n') #turn off send data to UART
+        time.sleep(0.5) #give the serial port sometime to receive the data
+	ticks = time.time()
+	end = time.time() - startt
+        numOfLines=0
+        while end <3000:
+            response = self.ser.readline()
+            numOfLines = numOfLines + 1
+            if response.find('OK')==0:
+                print 'SEND GPS DATA TURN OFF'
+                self.ser.write('AT+CGNSPWR=0\r\n')
+                #numOfLines=0
+                	time.sleep(0.5) #give the serial port sometime to receive the data
+                while end <3000:
+                    response = self.ser.readline()
+                    numO	fLines = numOfLines + 1
+                    if response.find('OK')==0:
+                        print 'GPS TURN OFF'
+                        break
+                break
+	    end = time.time() - startt
+	    print numOfLines
+
+
+
+    def __init__(self):
+        self.ser = serial.Serial("/dev/ttyAMA0", 9600, timeout=0.5)
+        self.isConnected = False
+        #Double check so as not to turn off the GPS * if suitable
+        self.isConnected = self.isReady()
+        #self.isConnected = self.isReady()
+        #self.readGPS()
+
+
+
